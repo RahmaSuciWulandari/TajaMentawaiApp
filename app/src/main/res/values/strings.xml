@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Taja Mentawai</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_articles">Articles</string>
+    <string name="menu_reservation">Reservation</string>
+    <string name="menu_notification">Notification</string>
+    <string name="menu_profile">Profiles</string>
+    <string name="TM_share">Taja Mentawai</string>
+    <string name="message_share">Share Sahabat Perjalanmu</string>
+</resources>
