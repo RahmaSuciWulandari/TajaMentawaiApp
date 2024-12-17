@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uci.tajamentawai.R
+import com.uci.tajamentawai.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +87,7 @@ fun TravelGuideScreen(navController:NavController) {
             item{FilterBar(selectedFilter) }
           //  Spacer(modifier = Modifier.height(8.dp))
             item{ Spacer(modifier = Modifier.height(16.dp))
-                ContentSection(selectedFilter.value)}
+                ContentSection(selectedFilter.value, navController = navController)}
 
         }
     }
@@ -98,6 +99,7 @@ fun CoverImageWithSearchBar() {
         modifier = Modifier
             .width(500.dp)
             .height(300.dp)
+            .offset(y = 50.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.travelguidecover),
@@ -152,15 +154,15 @@ fun HeaderSection() {
             modifier = Modifier
                 .offset(y = (-55).dp)
                 .fillMaxWidth()
-                .requiredHeight(85.dp)
+                .requiredHeight(150.dp)
                 .clip(shape = RoundedCornerShape(35.dp))
                 .background(color = Color.White)
-                .padding(horizontal = 16.dp) // Tambahkan padding internal jika perlu
+                .padding(horizontal = 16.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp) // Tambahkan padding internal agar teks tidak terlalu dekat
+                    .padding(16.dp)
             ) {
                 Text(
                     text = "Panduan Untuk Kamu di Mentawai",
@@ -178,145 +180,12 @@ fun HeaderSection() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun GuideDetailScreen(
-    artikelId: Int?,
-    navController: NavController
-) {
-    val context = LocalContext.current
-    val detailartikel = articles.filter { artikel ->
-        artikel.id == artikelId
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        ) {
-            Image(
-                painter = painterResource(id = detailartikel[0].imageRes),
-                contentDescription = "Article Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            // Overlay untuk teks di atas gambar
-            Column {
-                Column (
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier
-                        .padding(0.dp)
-                ){
-                    TopAppBar(
-                        title = { Text(text = " ") },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.navigateUp()}) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = "Back",
-                                    tint = Color.White
-                                )
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = Color.White,
-                            navigationIconContentColor = Color.White
-                        ),
-                    )
-
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.3f)),
-//                            .align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = detailartikel[0].title,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-            }
-        }
-
-        // Konten Artikel
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-
-                ) {
-                Text(
-                    text = "By ${detailartikel[0].author}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.DarkGray,
-                )
-                Box(
-                    modifier = Modifier
-                        .requiredWidth(110.dp)
-                        .requiredHeight(20.dp)
-                        .clip(shape = RoundedCornerShape(5.dp))
-                        .background(Color(0xFF00897B))
-                ){
-                    Row(
-
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(0.dp)
-                            .clickable { shareItem(context) }
-                    ) {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .size(15.dp)
-                            )}
-                        Text(
-                            text = "Share",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.White,
-                        )
-                    }
-
-                }
-            }
-            Text(
-                text = detailartikel[0].content,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Justify,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
-    }
-}
-
-
 @Composable
 fun FilterBar(selectedFilter: MutableState<String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .offset(y = -45.dp),
+            .offset(y = -110.dp),
             //.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
@@ -344,19 +213,19 @@ fun FilterButton(label: String, selectedFilter: MutableState<String>) {
 }
 
 @Composable
-fun ContentSection(selectedFilter: String) {
+fun ContentSection(selectedFilter: String, navController: NavController) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         when (selectedFilter) {
             "Populer" -> {
-                DestinationSection(popularDestinations)
+                DestinationSection( popularDestinations, navController = navController)
             }
 
             "Budaya Lokal" -> {
-                DestinationSection(localCultureDestinations)
+                DestinationSection(localCultureDestinations, navController = navController)
             }
 
             "Makanan Khas" -> {
-                DestinationSection(foodDestinations)
+                DestinationSection(foodDestinations, navController = navController)
             }
         }
 
@@ -366,61 +235,66 @@ fun ContentSection(selectedFilter: String) {
 }
 
 @Composable
-fun DestinationSection(destinations: List<TravelGuide>) {
+fun DestinationSection(destinations: List<TravelGuide>, navController: NavController) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .offset(y = -45.dp)
+            .offset(y = -110.dp)
     ) {
-        items(destinations) { destination ->
-            DestinationCard(destination.title, destination.imageRes)
+        items(destinations) { guide ->
+            TravelguideCard(guide) {
+                navController.navigate(Screen.PilihTravelGuide.route + "/${guide.id}")
+            }
         }
     }
 }
 
 @Composable
-fun DestinationCard(title: String, imageRes: Int) {
-    Card(
-        modifier = Modifier
+fun TravelguideCard(guide: TravelGuide, onClick: () -> Unit) {
+    Box(modifier = Modifier
             .width(120.dp)
-            .height(160.dp),
-        shape = RoundedCornerShape(8.dp)
+        .height(160.dp)
+        .clickable { onClick() }
+        .clip(RoundedCornerShape(8.dp))
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Image(
+            painter = painterResource(id = guide.imageRes),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
         ) {
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = title,
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(140.dp)
-            )
-            Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = title,
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                text = guide.title,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp)
             )
         }
     }
 }
+
 
 @Composable
 fun UpdateSection() {
+    Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = "Informasi Update Mentawai",
         style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .padding(bottom = 8.dp)
-            .offset(y = -35.dp)
+            .offset(y = -80.dp)
     )
     LazyRow(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 8.dp)
-            .offset(y = -35.dp),
+            .offset(y = -80.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(updateList) { update ->
@@ -431,77 +305,105 @@ fun UpdateSection() {
 
 @Composable
 fun UpdateCard(update: UpdateInfo) {
-    Card(
-        modifier = Modifier
-            .width(250.dp)
-            .fillMaxHeight()
-            .clip(RoundedCornerShape(8.dp))
+    Box(modifier = Modifier
+        .width(250.dp)
+        .height(200.dp)
+        .clip(RoundedCornerShape(8.dp))
+       // .clickable { onClick() }
     ) {
-        Column {
-            Image(
-                painter = painterResource(id = update.imageRes),
-                contentDescription = update.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+        Image(
+            painter = painterResource(id = update.imageRes),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
+        ) {
             Text(
                 text = update.title,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.BottomStart)
+                    .padding(8.dp)
+                    .padding(bottom = 14.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = update.description,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                style = TextStyle(fontSize = 12.sp, color = Color.Gray)
+                color = Color.White,
+                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp)
             )
         }
     }
 }
 
-data class UpdateInfo(val title: String, val description: String, val imageRes: Int)
+data class UpdateInfo(val id:Int, val title: String, val description: String, val imageRes: Int, val Info:String)
 
 val updateList = listOf(
     UpdateInfo(
+        id = 1,
         title = "Jalan-Jalan Asyik ke Mentawai, 5 Destinasi Seru yang Wajib Kamu Kunjungi!",
         description = "Suka Traveller",
-        imageRes = R.drawable.awera_island_beach
+        imageRes = R.drawable.awera_island_beach,
+        ""
     ),
     UpdateInfo(
+        1,
         title = "Surganya Diving ada di sini! Simak pengalaman wisatawan yang menarik",
         description = "Lokalin aja",
-        imageRes = R.drawable.pulau_sikakap
+        imageRes = R.drawable.pulau_sikakap,
+        ""
+    ),
+            UpdateInfo(
+                id = 3,
+                title = "Jalan-Jalan Asyik ke Mentawai, 5 Destinasi Seru yang Wajib Kamu Kunjungi!",
+                description = "Suka Traveller",
+                imageRes = R.drawable.awera_island_beach,
+                ""
+            ),
+    UpdateInfo(
+        4,
+        title = "Surganya Diving ada di sini! Simak pengalaman wisatawan yang menarik",
+        description = "Lokalin aja",
+        imageRes = R.drawable.pulau_sikakap,
+        ""
     )
 )
 
-data class TravelGuide(val title: String, val imageRes: Int)
+data class TravelGuide(val id:Int, val title: String, val imageRes: Int, val deskrip: String)
 
 val popularDestinations = listOf(
-    TravelGuide("Mentawai Island", R.drawable.mentawai_island),
-    TravelGuide("Awera Beach", R.drawable.awera_beach),
-    TravelGuide("Sipora Island", R.drawable.sipora_island),
-    TravelGuide("Mentawai Island", R.drawable.mentawai_island),
-    TravelGuide("Awera Beach", R.drawable.awera_beach),
-    TravelGuide("Sipora Island", R.drawable.sipora_island)
+    TravelGuide(1,"Mentawai Island", R.drawable.mentawai_island,"Kepulauan Mentawai yang indah adalah kepulauan kecil yang terletak di lepas pantai barat Sumatera di Indonesia. Mereka terkenal dengan kondisi selancarnya, menjadi salah satu dari 10 tempat selancar terbaik di Indonesia. Bahkan menyaingi yang ditemukan di surga peselancar Bali.\n" +
+            "\n" +
+            "Dengan demikian, banyak peselancar yang datang ke Kepulauan Mentawai setelah musim selancar di Bali selesai. Tapi berselancar bukan satu-satunya aktivitas yang ditawarkan di sini. Banyak pulau menyediakan kesempatan trekking, memancing, dan snorkeling yang menyenangkan. Jika tidak ada yang menarik, Anda dapat bersantai di pantai atau mempelajari lebih lanjut tentang budaya Mentawai.\n" +
+            "\n" +
+            "Ombak, laut biru kehijauan, pemandangan bawah laut yang luar biasa, resor terbaik, lokasi yang tenang dan tenang, hutan perawan, mencicipi makanan yang berbeda setiap hari, hewan endemik, tato, dan berpetualang dengan tinggal dan hidup seperti Suku Asli Mentawai akan membuat Anda siap untuk liburan yang tak terlupakan."),
+    TravelGuide(2,"Awera Beach", R.drawable.awera_beach,"Kepulauan Mentawai terletak di pesisir barat Sumatera, Indonesia, merupakan destinasi wisata yang menawarkan pantai-pantai indah, hutan hijau, dan budaya yang kaya. Terdiri dari sekitar tujuh pulau-pulau, gugusan kepulauan ini menawarkan kombinasi keindahan alam dan keunikan budaya suku Mentawai yang masih menjaga tradisi mereka hingga saat ini. Ini adalah tujuan yang sempurna untuk petualang, peselancar, dan pencinta budaya."),
+    TravelGuide(3,"Sipora Island", R.drawable.sipora_island, "Kepulauan Mentawai terletak di pesisir barat Sumatera, Indonesia, merupakan destinasi wisata yang menawarkan pantai-pantai indah, hutan hijau, dan budaya yang kaya. Terdiri dari sekitar tujuh pulau-pulau, gugusan kepulauan ini menawarkan kombinasi keindahan alam dan keunikan budaya suku Mentawai yang masih menjaga tradisi mereka hingga saat ini. Ini adalah tujuan yang sempurna untuk petualang, peselancar, dan pencinta budaya."),
+    TravelGuide(4,"Mentawai Island", R.drawable.mentawai_island,"Kepulauan Mentawai terletak di pesisir barat Sumatera, Indonesia, merupakan destinasi wisata yang menawarkan pantai-pantai indah, hutan hijau, dan budaya yang kaya. Terdiri dari sekitar tujuh pulau-pulau, gugusan kepulauan ini menawarkan kombinasi keindahan alam dan keunikan budaya suku Mentawai yang masih menjaga tradisi mereka hingga saat ini. Ini adalah tujuan yang sempurna untuk petualang, peselancar, dan pencinta budaya."),
+    TravelGuide(5,"Awera Beach", R.drawable.awera_beach,"Kepulauan Mentawai terletak di pesisir barat Sumatera, Indonesia, merupakan destinasi wisata yang menawarkan pantai-pantai indah, hutan hijau, dan budaya yang kaya. Terdiri dari sekitar tujuh pulau-pulau, gugusan kepulauan ini menawarkan kombinasi keindahan alam dan keunikan budaya suku Mentawai yang masih menjaga tradisi mereka hingga saat ini. Ini adalah tujuan yang sempurna untuk petualang, peselancar, dan pencinta budaya."),
+    TravelGuide(6,"Sipora Island", R.drawable.sipora_island,"Kepulauan Mentawai terletak di pesisir barat Sumatera, Indonesia, merupakan destinasi wisata yang menawarkan pantai-pantai indah, hutan hijau, dan budaya yang kaya. Terdiri dari sekitar tujuh pulau-pulau, gugusan kepulauan ini menawarkan kombinasi keindahan alam dan keunikan budaya suku Mentawai yang masih menjaga tradisi mereka hingga saat ini. Ini adalah tujuan yang sempurna untuk petualang, peselancar, dan pencinta budaya.")
 )
 
 val localCultureDestinations = listOf(
-    TravelGuide("Tato Mentawai", R.drawable.tato_mentawai),
-    TravelGuide("Kearifan Lokal", R.drawable.kearifan_lokal),
-    TravelGuide("Tradisi Mentawai", R.drawable.tradisi_mentawai),
-    TravelGuide("Tato Mentawai", R.drawable.tato_mentawai),
-    TravelGuide("Kearifan Lokal", R.drawable.kearifan_lokal),
-    TravelGuide("Tradisi Mentawai", R.drawable.tradisi_mentawai)
+    TravelGuide(7,"Tato Mentawai", R.drawable.tato_mentawai,""),
+    TravelGuide(8,"Kearifan Lokal", R.drawable.kearifan_lokal,""),
+    TravelGuide(9,"Tradisi Mentawai", R.drawable.tradisi_mentawai,""),
+    TravelGuide(10,"Tato Mentawai", R.drawable.tato_mentawai,""),
+    TravelGuide(11,"Kearifan Lokal", R.drawable.kearifan_lokal,""),
+    TravelGuide(12,"Tradisi Mentawai", R.drawable.tradisi_mentawai,"")
 )
 
 val foodDestinations = listOf(
-    TravelGuide("Anggau", R.drawable.anggau),
-    TravelGuide("Kapuru Sagu", R.drawable.kapuru_sagu),
-    TravelGuide("Subbet", R.drawable.subbet),
-    TravelGuide("Anggau", R.drawable.anggau),
-    TravelGuide("Kapuru Sagu", R.drawable.kapuru_sagu),
-    TravelGuide("Subbet", R.drawable.subbet)
+    TravelGuide(13,"Anggau", R.drawable.anggau, ""),
+    TravelGuide(14,"Kapuru Sagu", R.drawable.kapuru_sagu,""),
+    TravelGuide(15,"Subbet", R.drawable.subbet,""),
+    TravelGuide(16,"Anggau", R.drawable.anggau,""),
+    TravelGuide(17,"Kapuru Sagu", R.drawable.kapuru_sagu,""),
+    TravelGuide(18,"Subbet", R.drawable.subbet,"")
 )
 
 //@Preview(showBackground = true)

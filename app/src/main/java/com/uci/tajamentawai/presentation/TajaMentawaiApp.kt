@@ -48,6 +48,7 @@ import com.uci.tajamentawai.presentation.component.HomeScreen
 import com.uci.tajamentawai.presentation.component.MetodePembayaranScreen
 import com.uci.tajamentawai.presentation.component.NotifikasiScreen
 import com.uci.tajamentawai.presentation.component.PilihDestinationScreen
+import com.uci.tajamentawai.presentation.component.PilihTravelScreen
 import com.uci.tajamentawai.presentation.component.ReservasiScreen
 import com.uci.tajamentawai.presentation.component.SettingsScreen
 import com.uci.tajamentawai.presentation.component.SharedViewModel
@@ -242,6 +243,12 @@ fun TajaMentawaiApp(
 //            }
             composable(Screen.TravelGuide.route) {
                 TravelGuideScreen(navController)
+            }
+            composable(
+                Screen.PilihTravelGuide.route + "/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })) { backStackEntry ->
+                val guideId = backStackEntry.arguments?.getInt("id")
+                PilihTravelScreen(navController, guideId)
             }
             composable(Screen.Community.route) {
                 CommunityScreen(navController)

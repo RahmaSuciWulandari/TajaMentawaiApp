@@ -24,6 +24,7 @@ sealed class Screen (val route: String){
     data object Comment : Screen("comment")
     data object Konfir : Screen("konfirmasi_pembayaran")
     data object TravelGuide: Screen("travel_guide")
+    data object PilihTravelGuide: Screen("pilih_travel_guide")
     data object Community: Screen("community")
     data object Chat: Screen("chat")
     data object ListChat: Screen("listchat")
