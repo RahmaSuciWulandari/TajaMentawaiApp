@@ -26,11 +26,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.tajamentawaiapp.CommunityScreen
 import com.example.tajamentawaiapp.IsiChatScreen
 import com.example.tajamentawaiapp.PaymentConfirmationScreen
 import com.example.tajamentawaiapp.PembayaranScreen
-import com.example.tajamentawaiapp.cerita
 import com.uci.tajamentawai.Data.database.AppDatabase
 import com.uci.tajamentawai.R
 import com.uci.tajamentawai.navigation.NavigationItem
@@ -57,9 +55,14 @@ import com.uci.tajamentawai.presentation.component.SignUpScreen
 import com.uci.tajamentawai.presentation.component.SplashScreen
 import com.uci.tajamentawai.presentation.component.SuccessScreen
 import com.uci.tajamentawai.presentation.component.TravelGuideScreen
+import com.uci.tajamentawai.presentation.component.UpdateDetailScreen
 import com.uci.tajamentawai.presentation.component.Welcome1Screen
 import com.uci.tajamentawai.presentation.component.Welcome2Screen
 import com.uci.tajamentawai.presentation.component.Welcome3Screen
+import com.uci.tajamentawai.presentation.component.updateList
+import com.uci.tajamentawaiapp.CommunityScreen
+import com.uci.tajamentawaiapp.cerita
+
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -249,6 +252,16 @@ fun TajaMentawaiApp(
                 arguments = listOf(navArgument("id") { type = NavType.IntType })) { backStackEntry ->
                 val guideId = backStackEntry.arguments?.getInt("id")
                 PilihTravelScreen(navController, guideId)
+            }
+            composable(
+                Screen.UpdateDetail.route + "/{updateId}",
+                arguments = listOf(navArgument("updateId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val updateId = backStackEntry.arguments?.getInt("updateId")
+                val updateInfo = updateList.find { it.id == updateId }
+                if (updateInfo != null) {
+                    UpdateDetailScreen(navController, updateInfo)
+                }
             }
             composable(Screen.Community.route) {
                 CommunityScreen(navController)

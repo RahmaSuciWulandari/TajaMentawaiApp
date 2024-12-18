@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -28,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -210,10 +213,35 @@ fun ArticleDetailScreen(
     val detailartikel = articles.filter { artikel ->
         artikel.id == artikelId
     }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState()) // Membuat konten scrollable
+                .padding(innerPadding)
         ) {
+            // Gambar Header dengan Overlay
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -225,112 +253,78 @@ fun ArticleDetailScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                // Overlay untuk teks di atas gambar
-                Column {
-                    Column (
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Top,
-                        modifier = Modifier
-                                .padding(0.dp)
-                    ){
-                        TopAppBar(
-                            title = { Text(text = " ") },
-                            navigationIcon = {
-                                IconButton(onClick = { navController.navigateUp()}) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowBack,
-                                        contentDescription = "Back",
-                                        tint = Color.White
-                                    )
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = Color.White,
-                                navigationIconContentColor = Color.White
-                            ),
-                        )
-
-                    }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.3f)),
-//                            .align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = detailartikel[0].title,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = detailartikel[0].title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
                 }
             }
 
-            // Konten Artikel
+            // Informasi Penulis dan Tombol Share
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-
-                    ) {
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "By ${detailartikel[0].author}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color.DarkGray,
+                        color = Color.DarkGray
                     )
                     Box(
                         modifier = Modifier
                             .requiredWidth(110.dp)
                             .requiredHeight(20.dp)
-                            .clip(shape = RoundedCornerShape(5.dp))
+                            .clip(RoundedCornerShape(5.dp))
                             .background(Color(0xFF00897B))
-                    ){
+                    ) {
                         Row(
-
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(0.dp)
-                                .clickable { shareItem(context)}
+                            modifier = Modifier
+                                .clickable { shareItem(context) }
                         ) {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier
-                                        .size(15.dp)
-                                )}
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(15.dp)
+                            )
                             Text(
                                 text = "Share",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Color.White,
+                                color = Color.White
                             )
                         }
-
                     }
                 }
-                Text(
-                    text = detailartikel[0].content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
             }
+
+            // Konten Artikel
+            Text(
+                text = detailartikel[0].content,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 8.dp)
+            )
         }
     }
-
+}
 
 
 

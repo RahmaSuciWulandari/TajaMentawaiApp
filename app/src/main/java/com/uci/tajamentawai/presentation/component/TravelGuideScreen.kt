@@ -230,7 +230,7 @@ fun ContentSection(selectedFilter: String, navController: NavController) {
         }
 
         //Spacer(modifier = Modifier.height(16.dp))
-        UpdateSection()
+        UpdateSection(navController)
     }
 }
 
@@ -281,14 +281,14 @@ fun TravelguideCard(guide: TravelGuide, onClick: () -> Unit) {
 
 
 @Composable
-fun UpdateSection() {
+fun UpdateSection(navController: NavController) {
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = "Informasi Update Mentawai",
         style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
         modifier = Modifier
             .padding(bottom = 8.dp)
-            .offset(y = -80.dp)
+            .offset(y = -90.dp)
     )
     LazyRow(
         modifier = Modifier
@@ -298,18 +298,20 @@ fun UpdateSection() {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(updateList) { update ->
-            UpdateCard(update)
+            UpdateCard(update){
+                navController.navigate(Screen.UpdateDetail.route + "/${update.id}")
+            }
         }
     }
 }
 
 @Composable
-fun UpdateCard(update: UpdateInfo) {
+fun UpdateCard(update: UpdateInfo,onClick: () -> Unit) {
     Box(modifier = Modifier
         .width(250.dp)
         .height(200.dp)
         .clip(RoundedCornerShape(8.dp))
-       // .clickable { onClick() }
+        .clickable { onClick() }
     ) {
         Image(
             painter = painterResource(id = update.imageRes),
@@ -328,7 +330,7 @@ fun UpdateCard(update: UpdateInfo) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.BottomStart)
                     .padding(8.dp)
-                    .padding(bottom = 14.dp)
+                    .padding(bottom = 28.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -348,28 +350,48 @@ val updateList = listOf(
         title = "Jalan-Jalan Asyik ke Mentawai, 5 Destinasi Seru yang Wajib Kamu Kunjungi!",
         description = "Suka Traveller",
         imageRes = R.drawable.awera_island_beach,
-        ""
+        "Jakarta (ANTARA) - Di antara riuhnya destinasi-destinasi wisata populer dan favorit seperti Bali, Daerah Istimewa Yogyakarta plus Borobudur, Pantai Senggigi, dan Danau Toba, masih ada sejumlah wisatawan mancanegara maupun wisatawan Nusantara, bahkan pesohor dunia mengunjungi destinasi wisata sunyi seperti Mentawai.\n\n" +
+                "Mereka umumnya memburu keunikan, kekhasan lokal, keasrian, originalitas, otentisitas alami, serta ketenangan yang tak pernah ada di destinasi manapun.\n\n" +
+                "Sebagian dari wisatawan dan pesohor bisa saja sudah jenuh dengan kemewahan yang serba artifisial dan ingin sekali-sekali back to nature untuk penyegaran.\n\n" +
+                "Kendati infrastruktur konektivitas belum optimal ketersediaannya, dan dari aspek amenitas (fasilitas akomodasi dan pendukungnya) terbilang minimalis, serta posisinya pun di pojok Samudera Hindia yang sunyi, ribuan wisatawan mancanegara mendatangi Mentawai setiap tahunnya. Lantas ada apa dengan Mentawai? apa yang ditawarkan di Mentawai? Tingginya ombak yang konsisten sepanjang tahun menjadi surga bagi pada peselancar, termasuk kelas pemula.\n\n" +
+                "Bukan itu saja, pantai-pantainya yang indah, bersih dan berpasir putih, serta berair jernih dihiasi ikan berwarna warni dan terumbu karang yang indah pada taman-taman lautnya menawarkan sensasi tersendiri, dipadu dengan hijaunya kawasan hutan di sekitarnya.\n" +
+                "Mentawai memiliki banyak pantai cantik tersembunyi yang belum terjamah. Jumlah pulau saja sekitar 100, tetapi hanya beberapa pulau utama yang dihuni."
     ),
     UpdateInfo(
-        1,
+        2,
         title = "Surganya Diving ada di sini! Simak pengalaman wisatawan yang menarik",
         description = "Lokalin aja",
         imageRes = R.drawable.pulau_sikakap,
-        ""
+        "Jakarta (ANTARA) - Di antara riuhnya destinasi-destinasi wisata populer dan favorit seperti Bali, Daerah Istimewa Yogyakarta plus Borobudur, Pantai Senggigi, dan Danau Toba, masih ada sejumlah wisatawan mancanegara maupun wisatawan Nusantara, bahkan pesohor dunia mengunjungi destinasi wisata sunyi seperti Mentawai.\n\n" +
+                "Mereka umumnya memburu keunikan, kekhasan lokal, keasrian, originalitas, otentisitas alami, serta ketenangan yang tak pernah ada di destinasi manapun.\n\n" +
+                "Sebagian dari wisatawan dan pesohor bisa saja sudah jenuh dengan kemewahan yang serba artifisial dan ingin sekali-sekali back to nature untuk penyegaran.\n\n" +
+                "Kendati infrastruktur konektivitas belum optimal ketersediaannya, dan dari aspek amenitas (fasilitas akomodasi dan pendukungnya) terbilang minimalis, serta posisinya pun di pojok Samudera Hindia yang sunyi, ribuan wisatawan mancanegara mendatangi Mentawai setiap tahunnya. Lantas ada apa dengan Mentawai? apa yang ditawarkan di Mentawai? Tingginya ombak yang konsisten sepanjang tahun menjadi surga bagi pada peselancar, termasuk kelas pemula.\n\n" +
+                "Bukan itu saja, pantai-pantainya yang indah, bersih dan berpasir putih, serta berair jernih dihiasi ikan berwarna warni dan terumbu karang yang indah pada taman-taman lautnya menawarkan sensasi tersendiri, dipadu dengan hijaunya kawasan hutan di sekitarnya.\n" +
+                "Mentawai memiliki banyak pantai cantik tersembunyi yang belum terjamah. Jumlah pulau saja sekitar 100, tetapi hanya beberapa pulau utama yang dihuni."
     ),
             UpdateInfo(
                 id = 3,
                 title = "Jalan-Jalan Asyik ke Mentawai, 5 Destinasi Seru yang Wajib Kamu Kunjungi!",
                 description = "Suka Traveller",
                 imageRes = R.drawable.awera_island_beach,
-                ""
+                "Jakarta (ANTARA) - Di antara riuhnya destinasi-destinasi wisata populer dan favorit seperti Bali, Daerah Istimewa Yogyakarta plus Borobudur, Pantai Senggigi, dan Danau Toba, masih ada sejumlah wisatawan mancanegara maupun wisatawan Nusantara, bahkan pesohor dunia mengunjungi destinasi wisata sunyi seperti Mentawai.\n\n" +
+                        "Mereka umumnya memburu keunikan, kekhasan lokal, keasrian, originalitas, otentisitas alami, serta ketenangan yang tak pernah ada di destinasi manapun.\n\n" +
+                        "Sebagian dari wisatawan dan pesohor bisa saja sudah jenuh dengan kemewahan yang serba artifisial dan ingin sekali-sekali back to nature untuk penyegaran.\n\n" +
+                        "Kendati infrastruktur konektivitas belum optimal ketersediaannya, dan dari aspek amenitas (fasilitas akomodasi dan pendukungnya) terbilang minimalis, serta posisinya pun di pojok Samudera Hindia yang sunyi, ribuan wisatawan mancanegara mendatangi Mentawai setiap tahunnya. Lantas ada apa dengan Mentawai? apa yang ditawarkan di Mentawai? Tingginya ombak yang konsisten sepanjang tahun menjadi surga bagi pada peselancar, termasuk kelas pemula.\n\n" +
+                        "Bukan itu saja, pantai-pantainya yang indah, bersih dan berpasir putih, serta berair jernih dihiasi ikan berwarna warni dan terumbu karang yang indah pada taman-taman lautnya menawarkan sensasi tersendiri, dipadu dengan hijaunya kawasan hutan di sekitarnya.\n" +
+                        "Mentawai memiliki banyak pantai cantik tersembunyi yang belum terjamah. Jumlah pulau saja sekitar 100, tetapi hanya beberapa pulau utama yang dihuni."
             ),
     UpdateInfo(
         4,
         title = "Surganya Diving ada di sini! Simak pengalaman wisatawan yang menarik",
         description = "Lokalin aja",
         imageRes = R.drawable.pulau_sikakap,
-        ""
+        "Jakarta (ANTARA) - Di antara riuhnya destinasi-destinasi wisata populer dan favorit seperti Bali, Daerah Istimewa Yogyakarta plus Borobudur, Pantai Senggigi, dan Danau Toba, masih ada sejumlah wisatawan mancanegara maupun wisatawan Nusantara, bahkan pesohor dunia mengunjungi destinasi wisata sunyi seperti Mentawai.\n\n" +
+                "Mereka umumnya memburu keunikan, kekhasan lokal, keasrian, originalitas, otentisitas alami, serta ketenangan yang tak pernah ada di destinasi manapun.\n\n" +
+                "Sebagian dari wisatawan dan pesohor bisa saja sudah jenuh dengan kemewahan yang serba artifisial dan ingin sekali-sekali back to nature untuk penyegaran.\n\n" +
+                "Kendati infrastruktur konektivitas belum optimal ketersediaannya, dan dari aspek amenitas (fasilitas akomodasi dan pendukungnya) terbilang minimalis, serta posisinya pun di pojok Samudera Hindia yang sunyi, ribuan wisatawan mancanegara mendatangi Mentawai setiap tahunnya. Lantas ada apa dengan Mentawai? apa yang ditawarkan di Mentawai? Tingginya ombak yang konsisten sepanjang tahun menjadi surga bagi pada peselancar, termasuk kelas pemula.\n\n" +
+                "Bukan itu saja, pantai-pantainya yang indah, bersih dan berpasir putih, serta berair jernih dihiasi ikan berwarna warni dan terumbu karang yang indah pada taman-taman lautnya menawarkan sensasi tersendiri, dipadu dengan hijaunya kawasan hutan di sekitarnya.\n" +
+                "Mentawai memiliki banyak pantai cantik tersembunyi yang belum terjamah. Jumlah pulau saja sekitar 100, tetapi hanya beberapa pulau utama yang dihuni."
     )
 )
 

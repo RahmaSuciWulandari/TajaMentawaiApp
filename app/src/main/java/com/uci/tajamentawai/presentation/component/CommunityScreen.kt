@@ -1,4 +1,4 @@
-package com.example.tajamentawaiapp
+package com.uci.tajamentawaiapp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -61,7 +61,18 @@ import com.uci.tajamentawai.R
 import com.uci.tajamentawai.navigation.Screen
 import com.uci.tajamentawai.presentation.component.shareItem
 import com.uci.tajamentawai.ui.theme.TajaMentawaiTheme
-
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.material3.Button
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import java.io.File
+import coil.compose.rememberImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,7 +187,7 @@ fun CommunityScreen(navController: NavController) {
                         placeholder = { Text("Apa yang ingin anda tanyakan atau bagikan?", color = Color.Gray, fontSize = 10.sp) },
                         modifier = Modifier
                             .requiredWidth(250.dp)
-                           // .height(35.dp)
+                            // .height(35.dp)
                             .clip(
                                 shape = RoundedCornerShape(10.dp)
                             ),
@@ -234,6 +245,96 @@ fun CommunityScreen(navController: NavController) {
 }
 
 @Composable
+fun AddPostDialog(onDismiss: () -> Unit, onPostAdded: (String, String) -> Unit) {
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+
+    // Result launcher for picking image
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri -> imageUri = uri }
+    )
+
+    // Result launcher for camera
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                // Use the imageUri to handle the image
+            }
+        }
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add New Post") },
+        text = {
+            Column {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = content,
+                    onValueChange = { content = it },
+                    label = { Text("Content") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Button(onClick = {
+                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        val photoUri: Uri = FileProvider.getUriForFile(
+                            context,
+                            "com.uci.tajamentawaiapp.fileprovider",
+                            File(context.cacheDir, "photo.jpg")
+                        )
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                        cameraLauncher.launch(photoUri)
+                    }) {
+                        Text("Take Photo")
+                    }
+
+                    Button(onClick = {
+                        galleryLauncher.launch("image/*")
+                    }) {
+                        Text("Choose from Gallery")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (imageUri != null) {
+                    Image(painter = rememberImagePainter(imageUri), contentDescription = null)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (title.isNotBlank() && content.isNotBlank()) {
+                    onPostAdded(title, content)
+                }
+            }) {
+                Text("Post")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
 fun cerita(){
     Box{
         Column{
@@ -245,14 +346,6 @@ fun cerita(){
                     .fillMaxSize()
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCerita() {
-    TajaMentawaiTheme {
-        cerita()
     }
 }
 
@@ -403,48 +496,6 @@ fun PostItem(post: Post, navController: NavController) {
 //            // Here you can load comments from ViewModel or a repository
 //        }
 //    }
-
-
-@Composable
-fun AddPostDialog(onDismiss: () -> Unit, onPostAdded: (String, String) -> Unit) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add New Post") },
-        text = {
-            Column {
-                TextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Title") }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(
-                    value = content,
-                    onValueChange = { content = it },
-                    label = { Text("Content") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                if (title.isNotBlank() && content.isNotBlank()) {
-                    onPostAdded(title, content)
-                }
-            }) {
-                Text("Post")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
 
 data class Story(val title: String, val imageRes: Int)
 

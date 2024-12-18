@@ -103,6 +103,10 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation("androidx.fragment:fragment-ktx:1.6.1")
+
+    implementation("androidx.appcompat:appcompat:1.4.2")
+
+    implementation("io.coil-kt:coil-compose:2.2.2")
 }
 
 //// Ensure Hilt plugin is applied
