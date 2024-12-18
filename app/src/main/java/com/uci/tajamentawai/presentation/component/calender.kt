@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -147,8 +149,8 @@ import java.time.LocalDate
 //    }
 //}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(destinasiId: Int?, navController: NavController, sharedViewModel: SharedViewModel) {
     val selectedDate = remember { mutableStateOf<LocalDate?>(null) }
@@ -167,12 +169,12 @@ fun CalendarScreen(destinasiId: Int?, navController: NavController, sharedViewMo
             title = { Text("Tanggal Reservasi", style = typography.labelLarge) },
             navigationIcon = {
                 IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
                 }
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Bagian Gambar dan Judul
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -193,18 +195,52 @@ fun CalendarScreen(destinasiId: Int?, navController: NavController, sharedViewMo
                 Text(detaildestinasi[0].place, style = typography.bodyMedium, color = Color.Gray)
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        // Calendar Section
-        CalendarGrid(
-            currentMonth = currentMonth.value,
-            selectedDate = selectedDate
-        )
 
-        // Confirm Button
+        // Bagian Kalender
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            // Navigasi Bulan
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    currentMonth.value = currentMonth.value.minusMonths(1)
+                }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Bulan Sebelumnya")
+                }
+                Text(
+                    text = "${currentMonth.value.month.name.lowercase().replaceFirstChar { it.uppercase() }} ${currentMonth.value.year}",
+                    style = typography.labelLarge,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+                IconButton(onClick = {
+                    currentMonth.value = currentMonth.value.plusMonths(1)
+                }) {
+                    Icon(Icons.Default.ArrowForward, contentDescription = "Bulan Berikutnya")
+                }
+            }
+
+            // Grid Kalender
+            CalendarGrid(
+                currentMonth = currentMonth.value,
+                selectedDate = selectedDate
+            )
+        }
+
+        // Tombol Konfirmasi
         Button(
             onClick = {
                 selectedDate.value?.let { date ->
+                    // Simpan tanggal reservasi di ViewModel
                     sharedViewModel.setReservationDate(date.toString())
+                    // Navigasi kembali ke layar sebelumnya
                     navController.navigateUp()
                 }
             },
