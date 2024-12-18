@@ -200,7 +200,7 @@ fun ReservationCard(reservation: Reservation, navController: NavController) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = imageResId),
-                    contentDescription = "Destinasi Gambar",
+                    contentDescription = "Destinasi",
                     modifier = Modifier
                         .size(100.dp)
                         .clip(RoundedCornerShape(16.dp))
